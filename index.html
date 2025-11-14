@@ -259,6 +259,7 @@
 
     <section class="elements">
       <h2 class="section-heading">Element Bench</h2>
+      <p>Tap any two element tiles to auto-fill the combo (or type numbers like <code>1+2</code>).</p>
       <p class="hint">Materials Mission:</p>
       <p id="prompt">Loading challenge…</p>
       <p id="challenge-focus" class="hint"></p>
@@ -417,6 +418,16 @@
     const attemptsEl = document.getElementById("attempts");
     const elementGridEl = document.getElementById("element-grid");
     const selectedElementsEl = document.getElementById("selected-elements");
+    const feedbackSection = document.getElementById("feedback");
+    const feedbackBody =
+      document.getElementById("feedback-body") ||
+      (() => {
+        if (!feedbackSection) return null;
+        const body = document.createElement("div");
+        body.id = "feedback-body";
+        feedbackSection.appendChild(body);
+        return body;
+      })();
     const feedbackBody = document.getElementById("feedback-body");
     const feedbackEl = document.getElementById("feedback");
     const missionLogList = document.getElementById("mission-log-list");
@@ -425,6 +436,17 @@
     const comboInput = document.getElementById("combo-input");
     const nextButton = document.getElementById("next-round");
     const restartButton = document.getElementById("restart");
+
+    function setFeedback(html) {
+      if (feedbackBody) {
+        feedbackBody.innerHTML = html;
+      } else if (feedbackSection) {
+        feedbackSection.innerHTML = `
+          <h2 class="section-heading">Feedback</h2>
+          ${html}
+        `;
+      }
+    }
 
     function shuffle(list) {
       const arr = [...list];
@@ -460,6 +482,7 @@
       state.selectedIndices = [];
       updateUIForRound();
       comboInput.value = "";
+      setFeedback("<p>Pick two elements to tackle the mission.</p>");
       feedbackBody.innerHTML = "<p>Pick two elements to tackle the mission.</p>";
       feedbackEl.innerHTML = "<h3>Feedback</h3><p>Pick two elements to tackle the mission.</p>";
       comboInput.focus();
@@ -582,6 +605,7 @@
       event.preventDefault();
       const raw = comboInput.value.trim();
       if (!raw) {
+        setFeedback("<p>Please enter two element numbers.</p>");
         feedbackBody.innerHTML = "<p>Please enter two element numbers.</p>";
         feedbackEl.innerHTML = "<h3>Feedback</h3><p>Please enter two element numbers.</p>";
         return;
@@ -590,12 +614,14 @@
       attemptsEl.textContent = state.attempts;
       const selection = normalizeSelection(raw);
       if (selection.length < 2) {
+        setFeedback("<p>Enter at least two numbers separated by spaces or + signs.</p>");
         feedbackBody.innerHTML = "<p>Enter at least two numbers separated by spaces or + signs.</p>";
         feedbackEl.innerHTML = "<h3>Feedback</h3><p>Enter at least two numbers separated by spaces or + signs.</p>";
         return;
       }
       const chosenIds = translateSelection(selection);
       if (chosenIds.length < 2) {
+        setFeedback("<p>Make sure the numbers match the list above.</p>");
         feedbackBody.innerHTML = "<p>Make sure the numbers match the list above.</p>";
         feedbackEl.innerHTML = "<h3>Feedback</h3><p>Make sure the numbers match the list above.</p>";
         return;
@@ -608,6 +634,8 @@
         const points = awardPoints(state.attempts);
         state.score += points;
         scoreEl.textContent = state.score;
+        setFeedback(`
+          <p class="celebrate">${state.currentChallenge.success}</p>
         feedbackBody.innerHTML = `
           <p class="celebrate">${state.currentChallenge.success}</p>
         feedbackEl.innerHTML = `
@@ -616,6 +644,7 @@
           <p class="hint">Fun Fact: ${compound.funFact}</p>
           <p class="hint">Career Spark: ${spark}</p>
           <p>Points earned: ${points}</p>
+        `);
         `;
         state.missionLog.unshift({
           round: state.round,
@@ -629,6 +658,11 @@
         nextButton.disabled = false;
       } else if (knownCompounds[key]) {
         const compound = knownCompounds[key];
+        setFeedback(`
+          <p class="hint">Close, but not quite.</p>
+          <p>You formed <strong>${compound.name}</strong> (${compound.formula}), which is useful because ${compound.funFact}</p>
+          <p class="hint">Hint: ${state.currentChallenge.focus}</p>
+        `);
         feedbackBody.innerHTML = `
           <p class="hint">Close, but not quite.</p>
         feedbackEl.innerHTML = `
@@ -640,6 +674,11 @@
         const chosenNames = chosenIds
           .map((id) => elements.find((el) => el.id === id)?.name || id)
           .join(" + ");
+        setFeedback(`
+          <p class="hint">That combo fizzled.</p>
+          <p>${chosenNames} did not meet the challenge. Some elements, like neon, barely bond at all!</p>
+          <p class="hint">Hint: ${state.currentChallenge.focus}</p>
+        `);
         feedbackBody.innerHTML = `
           <p class="hint">That combo fizzled.</p>
         feedbackEl.innerHTML = `
