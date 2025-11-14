@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bond Builders</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <h1>Bond Builders</h1>
+    <section class="scoreboard">
+      <div><strong>Round:</strong> <span id="round">1</span></div>
+      <div><strong>Score:</strong> <span id="score">0</span> pts</div>
+      <div><strong>Attempts this round:</strong> <span id="attempts">0</span></div>
+    </section>
+
+    <section class="prompt-card">
+      <h2 class="section-heading">Materials Mission</h2>
+      <p id="prompt">Loading challenge…</p>
+      <p id="challenge-focus" class="mission-focus"></p>
+    </section>
+
+    <section class="elements">
+      <h2 class="section-heading">Element Bench</h2>
+      <p>Tap any two element tiles to auto-fill the combo (or type numbers like <code>1+2</code>).</p>
+      <div id="element-grid" class="element-grid"></div>
+      <p id="selected-elements" class="selection-hint">No elements selected yet.</p>
+    </section>
+
+    <form id="combo-form">
+      <label for="combo-input">Your combination:</label>
+      <input id="combo-input" type="text" autocomplete="off" placeholder="e.g., 1 + 2" />
+      <button type="submit">Test Bond</button>
+      <button type="button" id="next-round" class="secondary" disabled>Next Challenge</button>
+      <button type="button" id="restart" class="secondary">Restart</button>
+    </form>
+
+    <section class="feedback" id="feedback">
+      <h2 class="section-heading">Feedback</h2>
+      <div id="feedback-body">
+        <p>Choose elements to begin experimenting.</p>
+      </div>
+    </section>
+
+    <section class="mission-log" aria-live="polite">
+      <h2 class="section-heading">Mission Log</h2>
+      <p id="mission-log-empty">Win rounds to record your breakthroughs.</p>
+      <ul id="mission-log-list" hidden></ul>
+    </section>
+  </main>
+</body>
+</html>
