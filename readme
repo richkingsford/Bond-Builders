@@ -1,1 +1,90 @@
+# Text-Only Chemistry Challenge Requirements
 
+## 1. Core Purpose
+- Teach names, symbols, and key properties of chemical elements.
+- Promote conceptual understanding of how elements combine into compounds and functional materials.
+- Highlight links to materials science by showing how combinations create useful technologies.
+
+## 2. Game Format
+- **Round Duration:** 2–3 minutes.
+- **Replayability:** Always offer a "Play Again" option that reshuffles challenges and element sets.
+- **Interface:** Purely text-based (words, ASCII characters, and tables only—no images).
+
+## 3. Gameplay Loop
+1. **Prompt Phase**
+   - Present a real-world challenge (e.g., "Create a gas used in balloons" or "Build a compound that conducts electricity").
+   - Frame prompts in everyday language to ground chemistry concepts in familiar contexts.
+2. **Selection Phase**
+   - Offer 3–5 element "cards" per round, each listing name, symbol, atomic number, and one standout property.
+   - Example display:
+     ```
+     [1] Hydrogen (H) — #1, flammable gas
+     [2] Oxygen (O) — #8, supports combustion
+     [3] Carbon (C) — #6, forms strong bonds
+     [4] Sodium (Na) — #11, reactive metal
+     [5] Neon (Ne) — #10, inert noble gas
+     ```
+3. **Combination Phase**
+   - Player inputs selections (e.g., "1 + 2").
+   - Game outputs the resulting compound, formula, and brief explanation:
+     ```
+     You combined Hydrogen + Oxygen → H2O
+     Result: Water, essential for life.
+     Fun Fact: Water is a universal solvent used across materials science.
+     ```
+4. **Feedback Phase**
+   - Immediate success or failure feedback tied to the prompt objective.
+   - Correct answers trigger celebratory messaging ("You built a conductor!").
+   - Incorrect answers include guidance or hints ("Neon rarely bonds—try a more reactive element").
+
+## 4. Educational Features
+- Every element listing includes symbol, atomic number, and a memorable property.
+- Every valid compound description includes a practical application (e.g., "NaCl → table salt, used for food preservation").
+- Challenges explicitly reference materials science domains such as alloys, semiconductors, polymers, or energy storage.
+
+## 5. Difficulty & Progression
+- **Round 1:** Foundational compounds (water, carbon dioxide, table salt) with straightforward prompts.
+- **Round 2:** Functional materials (steel = Fe + C, ammonia = N + H, baking soda = Na + HCO3).
+- **Round 3:** Advanced or thematic scenarios (semiconductors, superconductors, polymers, battery electrolytes).
+- Difficulty increases through more complex prompts and element combinations, but instructions remain middle-school friendly.
+
+## 6. Replay & Engagement
+- Randomize element pools and prompts every round to encourage replay.
+- Include a points system with bonuses for speed, accuracy, or creative solutions.
+- Offer a one-key "Play Again" command that immediately restarts with fresh content.
+
+## 7. Constraints
+- No graphical assets (PNG, JPG, SVG). Text-only output.
+- Keep total play session per round under three minutes.
+- Use clear, accessible language suitable for middle school students.
+
+## 8. Stretch Goals (Optional)
+- ASCII periodic table mini-map for quick reference.
+- Timed challenge mode for advanced learners.
+- "Career spark" epilogues highlighting real-world roles ("Materials scientists use alloys like steel to build bridges—you could design the next one!").
+
+## 9. Prototype Instructions
+- Open `index.html` in any modern browser to try the current Bond Builders iteration.
+- Every round serves up a randomized challenge, a curated bench of five emoji-backed element tiles, and instant feedback.
+- Tap two element tiles to auto-fill the combo input (or enter the numbers manually, e.g., `1+2`), then hit **Next Challenge** or **Restart** to keep experimenting.
+
+## Suggested Next Enhancement
+- **Add "Career Spark" epilogues at the end of each successful round.** After the celebration message, show a single sentence such as "Materials scientists alloy iron and carbon to build earthquake-ready bridges." This ties directly into the stretch goal in §8, keeps the total feature set under ten items, and adds polish without extending the 2-minute play target—students still complete the same loop, but leave each challenge with a vivid, real-world hook.
+
+## 10. Career Spark Epilogues (Implemented)
+- After a correct combination, the game now surfaces a randomized, one-sentence "Career Spark" showcasing how real scientists, engineers, or technologists use similar materials. The extra line shares the same text-only styling, fits inside the existing feedback card, and keeps the loop well under two minutes while ending each win with an inspiring hook.
+
+## 11. Mission Log Highlights (Implemented)
+- Winning rounds now write a short entry to a three-slot "Mission Log" in the prototype interface. Each entry summarizes the round number, the compound you forged, and the paired celebration + career spark line. The log gives students a quick sense of progress without adding new actions, and it reinforces the most memorable chemistry wins for when they revisit the mini-game the next day.
+
+## 12. Emoji Element Bench (Implemented)
+- The element picker has been upgraded into a tactile bench of clickable tiles, each with a memorable emoji hinting at the element's vibe (e.g., `💧 Hydrogen`, `🧂 Chlorine`). Students can tap two tiles to build their combination instantly, while the text input still supports number entry for speedrunners. The playful emojis make the bench more interesting and the auto-fill removes friction, all while keeping the experience within the two-minute loop.
+
+## 13. Canonical Compound Fact Cards (Bug Fix)
+- Compound data is now indexed by a canonical (alphabetically sorted) element key so every successful round can instantly look up its fact card, no matter the order students tap the tiles. This removes the merge-conflict bug where the win screen would stall before enabling **Next Challenge**.
+- The feedback engine now also guards against missing data by showing a friendly placeholder message instead of crashing, so the loop always advances to the next mission.
+
+## 14. Modular Files to Prevent Merge Conflicts (Implemented)
+- The prototype is now organized into three small, purpose-built files: `index.html` for markup, `styles.css` for the visual theme, and `app.js` for gameplay logic. Linking the script with `defer` means it runs reliably once the DOM is ready, even if future edits relocate the tag.
+- This separation keeps diffs tightly scoped—UI polish stays in CSS, gameplay tweaks stay in JS—so teammates can land changes without clobbering each other inside a single mega-file.
+- When editing, prefer touching only the file that matches your change (for example, styling tweaks in `styles.css`), which drastically reduces the chance that the next pull request reintroduces merge conflicts.
