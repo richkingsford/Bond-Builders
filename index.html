@@ -194,6 +194,7 @@
     }
 
     .feedback .section-heading {
+    .feedback h3 {
       margin-top: 0;
     }
 
@@ -258,6 +259,13 @@
 
     <section class="elements">
       <h2 class="section-heading">Element Bench</h2>
+      <p class="hint">Materials Mission:</p>
+      <p id="prompt">Loading challenge…</p>
+      <p id="challenge-focus" class="hint"></p>
+    </section>
+
+    <section class="elements">
+      <h2>Element Bench</h2>
       <p>Tap two element tiles with the emojis that call to you (or type numbers like <code>1+2</code>).</p>
       <div id="element-grid" class="element-grid"></div>
       <p id="selected-elements" class="selection-hint">No elements selected yet.</p>
@@ -280,6 +288,12 @@
 
     <section class="mission-log" aria-live="polite">
       <h2 class="section-heading">Mission Log</h2>
+      <h3>Feedback</h3>
+      <p>Choose elements to begin experimenting.</p>
+    </section>
+
+    <section class="mission-log" aria-live="polite">
+      <h2>Mission Log</h2>
       <p id="mission-log-empty">Win rounds to record your breakthroughs.</p>
       <ul id="mission-log-list" hidden></ul>
     </section>
@@ -404,6 +418,7 @@
     const elementGridEl = document.getElementById("element-grid");
     const selectedElementsEl = document.getElementById("selected-elements");
     const feedbackBody = document.getElementById("feedback-body");
+    const feedbackEl = document.getElementById("feedback");
     const missionLogList = document.getElementById("mission-log-list");
     const missionLogEmpty = document.getElementById("mission-log-empty");
     const comboForm = document.getElementById("combo-form");
@@ -446,6 +461,7 @@
       updateUIForRound();
       comboInput.value = "";
       feedbackBody.innerHTML = "<p>Pick two elements to tackle the mission.</p>";
+      feedbackEl.innerHTML = "<h3>Feedback</h3><p>Pick two elements to tackle the mission.</p>";
       comboInput.focus();
       nextButton.disabled = true;
     }
@@ -567,6 +583,7 @@
       const raw = comboInput.value.trim();
       if (!raw) {
         feedbackBody.innerHTML = "<p>Please enter two element numbers.</p>";
+        feedbackEl.innerHTML = "<h3>Feedback</h3><p>Please enter two element numbers.</p>";
         return;
       }
       state.attempts += 1;
@@ -574,11 +591,13 @@
       const selection = normalizeSelection(raw);
       if (selection.length < 2) {
         feedbackBody.innerHTML = "<p>Enter at least two numbers separated by spaces or + signs.</p>";
+        feedbackEl.innerHTML = "<h3>Feedback</h3><p>Enter at least two numbers separated by spaces or + signs.</p>";
         return;
       }
       const chosenIds = translateSelection(selection);
       if (chosenIds.length < 2) {
         feedbackBody.innerHTML = "<p>Make sure the numbers match the list above.</p>";
+        feedbackEl.innerHTML = "<h3>Feedback</h3><p>Make sure the numbers match the list above.</p>";
         return;
       }
       const key = buildKey(chosenIds);
@@ -591,6 +610,8 @@
         scoreEl.textContent = state.score;
         feedbackBody.innerHTML = `
           <p class="celebrate">${state.currentChallenge.success}</p>
+        feedbackEl.innerHTML = `
+          <h3 class="celebrate">${state.currentChallenge.success}</h3>
           <p>You combined <strong>${compound.name}</strong> (${compound.formula}).</p>
           <p class="hint">Fun Fact: ${compound.funFact}</p>
           <p class="hint">Career Spark: ${spark}</p>
@@ -610,6 +631,8 @@
         const compound = knownCompounds[key];
         feedbackBody.innerHTML = `
           <p class="hint">Close, but not quite.</p>
+        feedbackEl.innerHTML = `
+          <h3>Close, but not quite.</h3>
           <p>You formed <strong>${compound.name}</strong> (${compound.formula}), which is useful because ${compound.funFact}</p>
           <p class="hint">Hint: ${state.currentChallenge.focus}</p>
         `;
@@ -619,6 +642,8 @@
           .join(" + ");
         feedbackBody.innerHTML = `
           <p class="hint">That combo fizzled.</p>
+        feedbackEl.innerHTML = `
+          <h3>That combo fizzled.</h3>
           <p>${chosenNames} did not meet the challenge. Some elements, like neon, barely bond at all!</p>
           <p class="hint">Hint: ${state.currentChallenge.focus}</p>
         `;
