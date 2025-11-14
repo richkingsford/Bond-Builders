@@ -184,7 +184,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateSelectionHint() {
-    if (!selectedElementsEl) return;
     if (!state.selectedIndices.length) {
       selectedElementsEl.textContent = "No elements selected yet.";
       return;
@@ -212,16 +211,15 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateUIForRound() {
-    if (roundEl) roundEl.textContent = state.round;
-    if (attemptsEl) attemptsEl.textContent = state.attempts;
-    if (promptEl) promptEl.textContent = state.currentChallenge.prompt;
-    if (focusEl) focusEl.textContent = state.currentChallenge.focus;
+    roundEl.textContent = state.round;
+    attemptsEl.textContent = state.attempts;
+    promptEl.textContent = state.currentChallenge.prompt;
+    focusEl.textContent = state.currentChallenge.focus;
     renderElements();
     updateSelectionHint();
   }
 
   function syncInputWithSelection() {
-    if (!comboInput) return;
     comboInput.value = state.selectedIndices.map((index) => index + 1).join(" + ");
   }
 
@@ -276,10 +274,6 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderMissionLog() {
-    if (!missionLogEmpty || !missionLogList) {
-      return;
-    }
-
     if (!state.missionLog.length) {
       missionLogEmpty.hidden = false;
       missionLogList.hidden = true;
@@ -309,14 +303,10 @@ window.addEventListener("DOMContentLoaded", () => {
     state.displayedElements = generateElementSet(state.currentChallenge.requiredElements);
     state.selectedIndices = [];
     updateUIForRound();
-    if (comboInput) {
-      comboInput.value = "";
-      comboInput.focus();
-    }
+    comboInput.value = "";
     setFeedback("<p>Pick two elements to tackle the mission.</p>");
-    if (nextButton) {
-      nextButton.disabled = true;
-    }
+    comboInput.focus();
+    nextButton.disabled = true;
   }
 
   function handleSubmit(event) {
@@ -327,7 +317,7 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
     state.attempts += 1;
-    if (attemptsEl) attemptsEl.textContent = state.attempts;
+    attemptsEl.textContent = state.attempts;
     const selection = normalizeSelection(raw);
     if (selection.length < 2) {
       setFeedback("<p>Enter at least two numbers separated by spaces or + signs.</p>");
@@ -353,7 +343,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const spark = randomSpark();
       const points = awardPoints(state.attempts);
       state.score += points;
-      if (scoreEl) scoreEl.textContent = state.score;
+      scoreEl.textContent = state.score;
       setFeedback(`
         <p class="celebrate">${state.currentChallenge.success}</p>
         <p>You combined <strong>${compound.name}</strong> (${compound.formula}).</p>
@@ -370,7 +360,7 @@ window.addEventListener("DOMContentLoaded", () => {
       });
       state.missionLog = state.missionLog.slice(0, 3);
       renderMissionLog();
-      if (nextButton) nextButton.disabled = false;
+      nextButton.disabled = false;
     } else if (knownCompounds[key]) {
       const compound = knownCompounds[key];
       setFeedback(`
@@ -390,38 +380,29 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  if (comboForm) {
-    comboForm.addEventListener("submit", handleSubmit);
-  }
+  comboForm.addEventListener("submit", handleSubmit);
+  elementGridEl.addEventListener("click", (event) => {
+    const card = event.target.closest(".element-card");
+    if (!card) return;
+    const index = Number(card.dataset.index);
+    if (Number.isNaN(index)) return;
+    toggleSelection(index);
+  });
 
-  if (elementGridEl) {
-    elementGridEl.addEventListener("click", (event) => {
-      const card = event.target.closest(".element-card");
-      if (!card) return;
-      const index = Number(card.dataset.index);
-      if (Number.isNaN(index)) return;
-      toggleSelection(index);
-    });
-  }
-
-  if (nextButton) {
-    nextButton.addEventListener("click", () => {
-      if (!nextButton.disabled) {
-        startRound();
-      }
-    });
-  }
-
-  if (restartButton) {
-    restartButton.addEventListener("click", () => {
-      state.round = 0;
-      state.score = 0;
-      if (scoreEl) scoreEl.textContent = 0;
-      state.missionLog = [];
-      renderMissionLog();
+  nextButton.addEventListener("click", () => {
+    if (!nextButton.disabled) {
       startRound();
-    });
-  }
+    }
+  });
+
+  restartButton.addEventListener("click", () => {
+    state.round = 0;
+    state.score = 0;
+    scoreEl.textContent = 0;
+    state.missionLog = [];
+    renderMissionLog();
+    startRound();
+  });
 
   renderMissionLog();
   startRound();

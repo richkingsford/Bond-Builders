@@ -79,12 +79,3 @@
 
 ## 12. Emoji Element Bench (Implemented)
 - The element picker has been upgraded into a tactile bench of clickable tiles, each with a memorable emoji hinting at the element's vibe (e.g., `💧 Hydrogen`, `🧂 Chlorine`). Students can tap two tiles to build their combination instantly, while the text input still supports number entry for speedrunners. The playful emojis make the bench more interesting and the auto-fill removes friction, all while keeping the experience within the two-minute loop.
-
-## 13. Canonical Compound Fact Cards (Bug Fix)
-- Compound data is now indexed by a canonical (alphabetically sorted) element key so every successful round can instantly look up its fact card, no matter the order students tap the tiles. This removes the merge-conflict bug where the win screen would stall before enabling **Next Challenge**.
-- The feedback engine now also guards against missing data by showing a friendly placeholder message instead of crashing, so the loop always advances to the next mission.
-
-## 14. Modular Files to Prevent Merge Conflicts (Implemented)
-- The prototype is now organized into three small, purpose-built files: `index.html` for markup, `styles.css` for the visual theme, and `app.js` for gameplay logic. Linking the script with `defer` means it runs reliably once the DOM is ready, even if future edits relocate the tag.
-- This separation keeps diffs tightly scoped—UI polish stays in CSS, gameplay tweaks stay in JS—so teammates can land changes without clobbering each other inside a single mega-file.
-- When editing, prefer touching only the file that matches your change (for example, styling tweaks in `styles.css`), which drastically reduces the chance that the next pull request reintroduces merge conflicts.
