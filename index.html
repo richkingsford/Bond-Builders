@@ -45,6 +45,17 @@
       background: #141a33;
     }
 
+    .section-heading {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.85rem;
+      color: #9fd9ff;
+      margin: 0 0 0.75rem;
+      display: inline-block;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #1f2742;
+    }
+
     .prompt-card {
       border: 1px solid #4c6fff;
       border-radius: 12px;
@@ -55,6 +66,13 @@
 
     .prompt-card p {
       margin: 0.25rem 0;
+      color: #f1f5ff;
+    }
+
+    .prompt-card .mission-focus {
+      font-style: italic;
+      opacity: 0.9;
+      color: #f1f5ff;
     }
 
     .elements {
@@ -129,6 +147,11 @@
       align-items: center;
     }
 
+    form label {
+      width: 100%;
+      font-weight: 600;
+    }
+
     input[type="text"] {
       flex: 1;
       min-width: 200px;
@@ -170,6 +193,7 @@
       min-height: 96px;
     }
 
+    .feedback .section-heading {
     .feedback h3 {
       margin-top: 0;
     }
@@ -228,6 +252,13 @@
     </section>
 
     <section class="prompt-card">
+      <h2 class="section-heading">Materials Mission</h2>
+      <p id="prompt">Loading challenge…</p>
+      <p id="challenge-focus" class="mission-focus"></p>
+    </section>
+
+    <section class="elements">
+      <h2 class="section-heading">Element Bench</h2>
       <p class="hint">Materials Mission:</p>
       <p id="prompt">Loading challenge…</p>
       <p id="challenge-focus" class="hint"></p>
@@ -249,6 +280,14 @@
     </form>
 
     <section class="feedback" id="feedback">
+      <h2 class="section-heading">Feedback</h2>
+      <div id="feedback-body">
+        <p>Choose elements to begin experimenting.</p>
+      </div>
+    </section>
+
+    <section class="mission-log" aria-live="polite">
+      <h2 class="section-heading">Mission Log</h2>
       <h3>Feedback</h3>
       <p>Choose elements to begin experimenting.</p>
     </section>
@@ -378,6 +417,7 @@
     const attemptsEl = document.getElementById("attempts");
     const elementGridEl = document.getElementById("element-grid");
     const selectedElementsEl = document.getElementById("selected-elements");
+    const feedbackBody = document.getElementById("feedback-body");
     const feedbackEl = document.getElementById("feedback");
     const missionLogList = document.getElementById("mission-log-list");
     const missionLogEmpty = document.getElementById("mission-log-empty");
@@ -420,6 +460,7 @@
       state.selectedIndices = [];
       updateUIForRound();
       comboInput.value = "";
+      feedbackBody.innerHTML = "<p>Pick two elements to tackle the mission.</p>";
       feedbackEl.innerHTML = "<h3>Feedback</h3><p>Pick two elements to tackle the mission.</p>";
       comboInput.focus();
       nextButton.disabled = true;
@@ -541,6 +582,7 @@
       event.preventDefault();
       const raw = comboInput.value.trim();
       if (!raw) {
+        feedbackBody.innerHTML = "<p>Please enter two element numbers.</p>";
         feedbackEl.innerHTML = "<h3>Feedback</h3><p>Please enter two element numbers.</p>";
         return;
       }
@@ -548,11 +590,13 @@
       attemptsEl.textContent = state.attempts;
       const selection = normalizeSelection(raw);
       if (selection.length < 2) {
+        feedbackBody.innerHTML = "<p>Enter at least two numbers separated by spaces or + signs.</p>";
         feedbackEl.innerHTML = "<h3>Feedback</h3><p>Enter at least two numbers separated by spaces or + signs.</p>";
         return;
       }
       const chosenIds = translateSelection(selection);
       if (chosenIds.length < 2) {
+        feedbackBody.innerHTML = "<p>Make sure the numbers match the list above.</p>";
         feedbackEl.innerHTML = "<h3>Feedback</h3><p>Make sure the numbers match the list above.</p>";
         return;
       }
@@ -564,6 +608,8 @@
         const points = awardPoints(state.attempts);
         state.score += points;
         scoreEl.textContent = state.score;
+        feedbackBody.innerHTML = `
+          <p class="celebrate">${state.currentChallenge.success}</p>
         feedbackEl.innerHTML = `
           <h3 class="celebrate">${state.currentChallenge.success}</h3>
           <p>You combined <strong>${compound.name}</strong> (${compound.formula}).</p>
@@ -583,6 +629,8 @@
         nextButton.disabled = false;
       } else if (knownCompounds[key]) {
         const compound = knownCompounds[key];
+        feedbackBody.innerHTML = `
+          <p class="hint">Close, but not quite.</p>
         feedbackEl.innerHTML = `
           <h3>Close, but not quite.</h3>
           <p>You formed <strong>${compound.name}</strong> (${compound.formula}), which is useful because ${compound.funFact}</p>
@@ -592,6 +640,8 @@
         const chosenNames = chosenIds
           .map((id) => elements.find((el) => el.id === id)?.name || id)
           .join(" + ");
+        feedbackBody.innerHTML = `
+          <p class="hint">That combo fizzled.</p>
         feedbackEl.innerHTML = `
           <h3>That combo fizzled.</h3>
           <p>${chosenNames} did not meet the challenge. Some elements, like neon, barely bond at all!</p>
