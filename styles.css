@@ -1,0 +1,226 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 1.5rem;
+  background: #0e0f16;
+  color: #f1f5ff;
+  line-height: 1.6;
+}
+
+.app-shell {
+  max-width: 800px;
+  margin: 0 auto;
+  border: 2px solid #5ddcff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: #111426;
+  box-shadow: 0 0 25px rgba(93, 220, 255, 0.25);
+}
+
+h1 {
+  margin-top: 0;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border: 1px solid #2f3b66;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  background: #141a33;
+}
+
+.section-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.85rem;
+  color: #9fd9ff;
+  margin: 0 0 0.75rem;
+  display: inline-block;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #1f2742;
+}
+
+.prompt-card {
+  border: 1px solid #4c6fff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #101634;
+}
+
+.prompt-card p {
+  margin: 0.25rem 0;
+  color: #f1f5ff;
+}
+
+.prompt-card .mission-focus {
+  font-style: italic;
+  opacity: 0.9;
+  color: #f1f5ff;
+}
+
+.elements {
+  border: 1px solid #26304f;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #0d1329;
+}
+
+.element-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.element-card {
+  border: 1px solid #26304f;
+  border-radius: 12px;
+  padding: 0.75rem;
+  text-align: left;
+  background: #0c142d;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.1s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.element-card:hover,
+.element-card:focus-visible {
+  border-color: #5ddcff;
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.element-card.selected {
+  border-color: #65ffbf;
+  background: #102036;
+  box-shadow: 0 0 12px rgba(101, 255, 191, 0.2);
+}
+
+.element-emoji {
+  font-size: 1.8rem;
+}
+
+.element-name {
+  font-weight: 600;
+}
+
+.element-detail {
+  font-size: 0.9rem;
+  color: #c6d2ff;
+}
+
+.selection-hint {
+  margin-top: 0.75rem;
+  font-style: italic;
+  color: #c4ddff;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+form label {
+  width: 100%;
+  font-weight: 600;
+}
+
+input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #4c6fff;
+  background: #0b1021;
+  color: inherit;
+  font-size: 1rem;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background: linear-gradient(120deg, #36d1dc, #5b86e5);
+  color: #05060c;
+  font-weight: bold;
+}
+
+button.secondary {
+  background: transparent;
+  border: 1px solid #5ddcff;
+  color: #5ddcff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback {
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #32557f;
+  background: #0f172e;
+  min-height: 96px;
+}
+
+.feedback .section-heading {
+  margin-top: 0;
+}
+
+.mission-log {
+  margin-top: 1.5rem;
+  border: 1px solid #1f2742;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #0c1023;
+}
+
+.mission-log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mission-log li {
+  border-left: 4px solid #36d1dc;
+  padding-left: 0.75rem;
+}
+
+.celebrate {
+  color: #65ffbf;
+}
+
+.hint {
+  color: #f7d794;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  .app-shell {
+    padding: 1rem;
+  }
+}
