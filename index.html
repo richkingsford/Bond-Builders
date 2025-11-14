@@ -194,6 +194,7 @@
     }
 
     .feedback .section-heading {
+    .feedback h3 {
       margin-top: 0;
     }
 
@@ -259,6 +260,14 @@
     <section class="elements">
       <h2 class="section-heading">Element Bench</h2>
       <p>Tap any two element tiles to auto-fill the combo (or type numbers like <code>1+2</code>).</p>
+      <p class="hint">Materials Mission:</p>
+      <p id="prompt">Loading challenge…</p>
+      <p id="challenge-focus" class="hint"></p>
+    </section>
+
+    <section class="elements">
+      <h2>Element Bench</h2>
+      <p>Tap two element tiles with the emojis that call to you (or type numbers like <code>1+2</code>).</p>
       <div id="element-grid" class="element-grid"></div>
       <p id="selected-elements" class="selection-hint">No elements selected yet.</p>
     </section>
@@ -280,6 +289,12 @@
 
     <section class="mission-log" aria-live="polite">
       <h2 class="section-heading">Mission Log</h2>
+      <h3>Feedback</h3>
+      <p>Choose elements to begin experimenting.</p>
+    </section>
+
+    <section class="mission-log" aria-live="polite">
+      <h2>Mission Log</h2>
       <p id="mission-log-empty">Win rounds to record your breakthroughs.</p>
       <ul id="mission-log-list" hidden></ul>
     </section>
@@ -301,56 +316,43 @@
       { id: "Ne", name: "Neon", symbol: "Ne", atomicNumber: 10, property: "glows in signs", emoji: "🎇" }
     ];
 
-    const compoundEntries = [
-      {
-        elements: ["C", "O"],
+    const knownCompounds = {
+      "C,O": {
         name: "Carbon Dioxide",
         formula: "CO₂",
         funFact: "CO₂ keeps greenhouse plants thriving in controlled environments."
       },
-      {
-        elements: ["Fe", "C"],
+      "Fe,C": {
         name: "Steel",
         formula: "Fe+C",
         funFact: "Steel mixes iron with carbon to build skyscrapers and bridges."
       },
-      {
-        elements: ["H", "N"],
+      "H,N": {
         name: "Ammonia",
         formula: "NH₃",
         funFact: "Ammonia stores nitrogen that fuels fertilizers and fuel cells."
       },
-      {
-        elements: ["H", "O"],
+      "H,O": {
         name: "Water",
         formula: "H₂O",
         funFact: "Water dissolves and transports ions in batteries and living cells."
       },
-      {
-        elements: ["Na", "Cl"],
+      "Na,Cl": {
         name: "Sodium Chloride",
         formula: "NaCl",
         funFact: "Road crews spread NaCl brine to melt ice before storms."
       },
-      {
-        elements: ["Si", "O"],
+      "Si,O": {
         name: "Silicon Dioxide",
         formula: "SiO₂",
         funFact: "SiO₂ becomes glass fiber that guides internet light signals."
       },
-      {
-        elements: ["Cu", "S"],
+      "Cu,S": {
         name: "Copper Sulfide",
         formula: "CuS",
         funFact: "Copper sulfide shows up in solar cells that harvest sunlight."
       }
-    ];
-
-    const knownCompounds = compoundEntries.reduce((map, entry) => {
-      const key = entry.elements.slice().sort().join(",");
-      map[key] = entry;
-      return map;
-    }, {});
+    };
 
     const challenges = [
       {
@@ -426,6 +428,8 @@
         feedbackSection.appendChild(body);
         return body;
       })();
+    const feedbackBody = document.getElementById("feedback-body");
+    const feedbackEl = document.getElementById("feedback");
     const missionLogList = document.getElementById("mission-log-list");
     const missionLogEmpty = document.getElementById("mission-log-empty");
     const comboForm = document.getElementById("combo-form");
@@ -479,6 +483,8 @@
       updateUIForRound();
       comboInput.value = "";
       setFeedback("<p>Pick two elements to tackle the mission.</p>");
+      feedbackBody.innerHTML = "<p>Pick two elements to tackle the mission.</p>";
+      feedbackEl.innerHTML = "<h3>Feedback</h3><p>Pick two elements to tackle the mission.</p>";
       comboInput.focus();
       nextButton.disabled = true;
     }
@@ -600,6 +606,8 @@
       const raw = comboInput.value.trim();
       if (!raw) {
         setFeedback("<p>Please enter two element numbers.</p>");
+        feedbackBody.innerHTML = "<p>Please enter two element numbers.</p>";
+        feedbackEl.innerHTML = "<h3>Feedback</h3><p>Please enter two element numbers.</p>";
         return;
       }
       state.attempts += 1;
@@ -607,36 +615,37 @@
       const selection = normalizeSelection(raw);
       if (selection.length < 2) {
         setFeedback("<p>Enter at least two numbers separated by spaces or + signs.</p>");
+        feedbackBody.innerHTML = "<p>Enter at least two numbers separated by spaces or + signs.</p>";
+        feedbackEl.innerHTML = "<h3>Feedback</h3><p>Enter at least two numbers separated by spaces or + signs.</p>";
         return;
       }
       const chosenIds = translateSelection(selection);
       if (chosenIds.length < 2) {
         setFeedback("<p>Make sure the numbers match the list above.</p>");
+        feedbackBody.innerHTML = "<p>Make sure the numbers match the list above.</p>";
+        feedbackEl.innerHTML = "<h3>Feedback</h3><p>Make sure the numbers match the list above.</p>";
         return;
       }
       const key = buildKey(chosenIds);
       const requiredKey = buildKey(state.currentChallenge.requiredElements);
       if (key === requiredKey) {
         const compound = knownCompounds[key];
-        if (!compound) {
-          setFeedback(`
-            <p class="celebrate">${state.currentChallenge.success}</p>
-            <p>Mission cleared, but the fact card went missing. Tap Next Challenge to keep building!</p>
-          `);
-          nextButton.disabled = false;
-          return;
-        }
         const spark = randomSpark();
         const points = awardPoints(state.attempts);
         state.score += points;
         scoreEl.textContent = state.score;
         setFeedback(`
           <p class="celebrate">${state.currentChallenge.success}</p>
+        feedbackBody.innerHTML = `
+          <p class="celebrate">${state.currentChallenge.success}</p>
+        feedbackEl.innerHTML = `
+          <h3 class="celebrate">${state.currentChallenge.success}</h3>
           <p>You combined <strong>${compound.name}</strong> (${compound.formula}).</p>
           <p class="hint">Fun Fact: ${compound.funFact}</p>
           <p class="hint">Career Spark: ${spark}</p>
           <p>Points earned: ${points}</p>
         `);
+        `;
         state.missionLog.unshift({
           round: state.round,
           compound: compound.name,
@@ -654,6 +663,13 @@
           <p>You formed <strong>${compound.name}</strong> (${compound.formula}), which is useful because ${compound.funFact}</p>
           <p class="hint">Hint: ${state.currentChallenge.focus}</p>
         `);
+        feedbackBody.innerHTML = `
+          <p class="hint">Close, but not quite.</p>
+        feedbackEl.innerHTML = `
+          <h3>Close, but not quite.</h3>
+          <p>You formed <strong>${compound.name}</strong> (${compound.formula}), which is useful because ${compound.funFact}</p>
+          <p class="hint">Hint: ${state.currentChallenge.focus}</p>
+        `;
       } else {
         const chosenNames = chosenIds
           .map((id) => elements.find((el) => el.id === id)?.name || id)
@@ -663,6 +679,13 @@
           <p>${chosenNames} did not meet the challenge. Some elements, like neon, barely bond at all!</p>
           <p class="hint">Hint: ${state.currentChallenge.focus}</p>
         `);
+        feedbackBody.innerHTML = `
+          <p class="hint">That combo fizzled.</p>
+        feedbackEl.innerHTML = `
+          <h3>That combo fizzled.</h3>
+          <p>${chosenNames} did not meet the challenge. Some elements, like neon, barely bond at all!</p>
+          <p class="hint">Hint: ${state.currentChallenge.focus}</p>
+        `;
       }
     }
 
